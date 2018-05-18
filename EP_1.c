@@ -220,6 +220,8 @@ free(B); free(G);
 free(vetorTeta);
 free(Pcalc); free(PcalcOrdenado); 
 free(Qcalc);
+
+
 //free(vetorV); free(vetorVPQ); free(vetorVPQ);
 
 return 0;
