@@ -9,13 +9,14 @@
 #include "funcoes.h"
 
 
-#define tensaoNom1 = 132790.56;
-#define tensaoNom21 = 7967.434;
-#define tensaoNom22 = 127.017;
-#define tensaoNom3 =  7967.434;
-#define tensaoNom41 = 7967.434;
-#define tensaoNom42 = 254.034;
-#define tensaoNom43 = 219.393;
+
+#define tensaoNom21 7967.434
+#define tensaoNom22 127.017
+#define tensaoNom3 7967.434
+#define tensaoNom41 7967.434
+#define tensaoNom42 254.034
+#define tensaoNom43 219.393
+
 
 
 int main () {
@@ -61,6 +62,7 @@ metodoDeNewton (A, x, b, n);
 
     int* tipoDaBarra = (int *)calloc(nBarras, sizeof(int));
     double* tensao = (double *)calloc(nBarras, sizeof(double));
+    double* tensaoNominal = (double *)calloc(nBarras, sizeof(double));
     double* campo4 = (double *)calloc(nBarras, sizeof(double));
     double* campo5 = (double *)calloc(nBarras, sizeof(double));
 
@@ -87,6 +89,8 @@ metodoDeNewton (A, x, b, n);
     }
     printf ("\nPQ: %d  ; PV: %d ; Swing: %d\n", nPQ, nPV, nS);
 
+    for (int i = 0; i < nBarras; i++) tensaoNominal[i] = tensao[i];
+
     //Consegui um vetor de tensões iniciais como as tensões PQ e PV
     //nas posições corretas (VPQ1 VPQ2......VPQn VPV1 VPV2......VPVn VS1 VS2 .... VSn)
     //double* vetorV = (double *)calloc(nBarras, sizeof(double));
@@ -98,7 +102,7 @@ metodoDeNewton (A, x, b, n);
                         //testes ok
     //jS = nPV + nPQ;
     for(int i = 0; i < nBarras; i ++ /*jS++*/) {
-        if (tipoDaBarra[i] == 2) vetorTeta[i] = campo5[i];
+        if (tipoDaBarra[i] == 2) vetorTeta[i] = (PI*campo5[i])/180;
         //else vetorTeta[i] = rand();
         //else jS--;
     }
@@ -116,7 +120,7 @@ metodoDeNewton (A, x, b, n);
         printf ("%.5lf ", vetorV[i]);
     }*/
     printf("\n");
-    printf("Tetas\n");
+    printf("Thetas\n");
     for (int i = 0; i < nBarras; i++) {
         printf ("%.5lf ", vetorTeta[i]);
     }
@@ -157,71 +161,85 @@ metodoDeNewton (A, x, b, n);
             fscanf(arqYNodal, "%lf", &G[nDaLinhaYNodal][nDaColunaYNodal]);
             fscanf(arqYNodal, "%lf\n", &B[nDaLinhaYNodal][nDaColunaYNodal]);
         }
-        printf("\n\n Matriz B");
-        verMatriz(B, nBarras);
-        printf("\n\n Matriz G");
-        verMatriz(G, nBarras);
+        //printf("\n\n Matriz B");
+        //verMatriz(B, nBarras);
+        //printf("\n\n Matriz G");
+        //verMatriz(G, nBarras);
 
     fclose(arqYNodal);
-
-    double* Pcalc = (double *)calloc(nBarras, sizeof(double));
-    calculaPcalc(nBarras, tensao, vetorTeta, G, B, Pcalc);
-    printf ("Pcalc antes:     \n");
-    verVetordouble(Pcalc, nBarras);
-    
-    double* PcalcOrdenado = (double *)calloc(nBarras, sizeof(double));
-    ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, PcalcOrdenado , Pcalc);
-    printf ("Pcalc depois:     \n");
-    verVetordouble(PcalcOrdenado, nBarras);
-
-    double* Qcalc = (double *)calloc(nBarras, sizeof(double));
-    calculaQcalc(nBarras, tensao, vetorTeta, G, B, Qcalc);
-    printf ("Qcalc antes:     \n");
-    verVetordouble(Qcalc, nBarras);
-
-    double* QcalcOrdenado = (double *)calloc(nBarras, sizeof(double));
-    ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, QcalcOrdenado , Qcalc);
-    printf ("Qcalc depois:     \n");
-    verVetordouble(QcalcOrdenado, nBarras);
 
     int* troca = (int *)calloc(nBarras, sizeof(int));
     constroiTroca (nPQ, nPV, nBarras, tipoDaBarra, troca);
     printf("Troca: \n");
-    verVetorint(troca, nBarras);
+    verVetorint(troca, nBarras);   
 
-    double* desvioP = (double *)calloc(2*nPQ + nPV, sizeof(double));
-    double* campo4Ordenado = (double *)calloc(nBarras, sizeof(double));
-    ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, campo4Ordenado, campo4);
-    constroiDesvioDePotencia (nPQ, nPV, desvioP, PcalcOrdenado, QcalcOrdenado, campo4Ordenado);
-    printf("Vetor desvios: \n");
-    verVetordouble(desvioP, 2*nPQ + nPV);
+    printf ("\nComeça Newton\n");
 
+    metodoDeNewton(nBarras, nPQ, nPV, nS, tensao, vetorTeta, tipoDaBarra, campo4, G, B, troca); 
+
+    double** Sreal = (double **)calloc(nBarras, sizeof(double *));
+    double** Simag = (double **)calloc(nBarras, sizeof(double *));
+    for (int i = 0; i < nBarras; i++){//nLinhas =nColunas
+        Sreal[i] = (double *)calloc(nBarras, sizeof(double));
+        Simag[i] = (double *)calloc(nBarras, sizeof(double));
+    }
     
-    double** J = (double **)calloc(2*nPQ + nPV, sizeof(double *));
-    for (int i = 0; i < 2*nPQ + nPV; i++){//nLinhas =nColunas
-        J[i] = (double *)calloc(2*nPQ + nPV, sizeof(double));
+    calculoDoFluxoDePotencia (nBarras, nPQ, nPV, tensao, vetorTeta, tipoDaBarra, G, B, Sreal, Simag);
+
+    printf ("Barra          Tensao (pu)          Angulo          Módulo da Tensao\n");
+    if (pergunta == 1) {
+        for (int i = 0; i < nBarras; i++) {
+            printf("  %d         ", i);
+            printf ("   %.6E       ", tensao[i]/tensaoNominal[i]);
+            printf(" %.4lf          ", (vetorTeta[i]*180)/PI);
+            printf(" %E    \n", tensao[i]);
+        }
     }
 
-    constroiJacobiana (nBarras, nPQ, nPV, tensao, vetorTeta, tipoDaBarra, Pcalc, Qcalc, G, B, J);
-    
-    printf("Jacobiana\n");
-    verMatriz(J, 2*nPQ+nPV);
-    /*double* desvioPotencia = (double *)calloc(2*nPQ + nPV, sizeof(double));
-    double*  = (double *)calloc(2*nPQ + nPV, sizeof(double));
-    calculaDesvioDePotencia ();
-    */
+    else if (pergunta == 2) {
+        for (int i = 0; i < nBarras; i++) {
+            if (i == 2 || i == 11 || i == 25 || i == 28 || i == 30 || i == 42 || i == 43 || i == 47
+                || i == 48 || i == 49) {
+            printf("  %d         ", i);
+            printf ("   %.6E       ", tensao[i]/tensaoNominal[i]);
+            printf(" %.4lf          ", (vetorTeta[i]*180)/PI);
+            printf(" %E    \n", tensao[i]);
+            }
+        }
+    }
 
+    else if (pergunta == 3) {
+        for (int i = 0; i < nBarras; i++) {
+            if (i == 0 || i == 1 || i == 47 || i == 633 || i == 1414 || i == 1429 || i == 1528 || i == 1607
+                || i == 1609 || i == 1636) {
+            printf("  %d         ", i);
+            printf ("   %.6E       ", tensao[i]/tensaoNominal[i]);
+            printf(" %.4lf          ", (vetorTeta[i]*180)/PI);
+            printf(" %E    \n", tensao[i]);
+            }
+        }
+    }
+
+    else if (pergunta == 4) {
+        for (int i = 0; i < nBarras; i++) {
+            if (i == 3 || i == 990 || i == 1310 || i == 1466 || i == 3947 || i == 4015 || i == 4188 
+                || i == 5820 || i == 5830 || i == 5840) {
+            printf("  %d         ", i);
+            printf ("   %.6E       ", tensao[i]/tensaoNominal[i]);
+            printf(" %.4lf          ", (vetorTeta[i]*180)/PI);
+            printf(" %E    \n", tensao[i]);
+            }
+        }
+    }
 //free(A); free(x); free(b);
 //free(tipoDaBarra); free(tensao);
 free(tipoDaBarra); free(tensao); free(campo4); free(campo5); 
 for (int i = 0; i < nBarras; i++) {free(B[i]); free(G[i]);}
+free(troca);
 free(B); free(G);
+free(tensaoNominal);
 //free(vetorV); 
 free(vetorTeta);
-free(Pcalc); free(PcalcOrdenado); 
-free(Qcalc);
-
-
 //free(vetorV); free(vetorVPQ); free(vetorVPQ);
 
 return 0;
