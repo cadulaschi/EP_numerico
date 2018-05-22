@@ -10,25 +10,20 @@ void verMatriz (double **ver, int n) {
         printf ("\n");
     }
     printf("\n");
-    //free(ver);
 }
 
 void verVetordouble (double *ver, int n) {
-    //printf ("\n");
     for (int i = 0; i < n; i++) {
         printf ("%lf  ", ver[i]);
     }
     printf ("\n");
-    //free(ver);
 }
 
 void verVetorint (int *ver, int n) {
-    //printf ("\n");
     for (int i = 0; i < n; i++) {
         printf ("%d  ", ver[i]);
     }
     printf ("\n");
-    //free(ver);
 }
 
 void decomposicaoLU(double **temp, int *p, int n) {
@@ -92,10 +87,6 @@ double soma = 0;
         }
     }
 
-    //printf("Vetor b: ");
-    //for (int i = 0; i < n; i++) printf("%f ", b[i]);
-    //printf ("\n\n");
-
     //Resolvendo o sistema A*x = b
     x[n - 1] = b[n - 1]/temp[n - 1][n - 1];
     for (int i = n - 2; i >= 0; i--) {
@@ -145,26 +136,17 @@ double* colunaOrdenado = (double *)calloc(nBarras, sizeof(double*));
 double maxTheta, maxV;
 
     int iter = 0;
-    //while (iter < 10) {
     do {
         iter++;
+        printf("\n ********************** ITERAÇÃO %d ************************", iter);
 
         calculaPcalc(nBarras, tensao, vetorTeta, G, B, Pcalc);
-        //printf ("Pcalc antes:     \n");
-        //verVetordouble(Pcalc, nBarras);
         
-        ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, PcalcOrdenado , Pcalc);
-        //printf ("Pcalc depois:     \n");
-        //verVetordouble(PcalcOrdenado, nBarras);    
+        ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, PcalcOrdenado , Pcalc);  
         
         calculaQcalc(nBarras, tensao, vetorTeta, G, B, Qcalc);
-        //printf ("Qcalc antes:     \n");
-        //verVetordouble(Qcalc, nBarras);
         
-        ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, QcalcOrdenado , Qcalc);
-        //printf ("Qcalc depois:     \n");
-        //verVetordouble(QcalcOrdenado, nBarras);
-        
+        ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, QcalcOrdenado , Qcalc);       
         
         constroiJacobiana (nBarras, nPQ, nPV, tensao, vetorTeta, tipoDaBarra, Pcalc, Qcalc,
                            G, B, J, troca, fptheta, fpV, fqtheta, fqV, fpthetaOrdenado, fpVOrdenado,
@@ -172,9 +154,7 @@ double maxTheta, maxV;
 
         ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, campo4Ordenado, campo4);
         //Forma vetor de desvios já negativado!
-        constroiDesvioDePotencia (nPQ, nPV, desvioP, PcalcOrdenado, QcalcOrdenado, campo4Ordenado);
-        //printf("Vetor desvios: \n");
-        //verVetordouble(desvioP, 2*nPQ + nPV);   
+        constroiDesvioDePotencia (nPQ, nPV, desvioP, PcalcOrdenado, QcalcOrdenado, campo4Ordenado);  
 
          for (int i = 0; i < 2*nPQ+ nPV; i++) {
             for (int j = 0; j < 2*nPQ+ nPV; j++) {
@@ -206,8 +186,9 @@ double maxTheta, maxV;
         }
     } while (fabs(maxV) > 1e-6 && fabs(maxTheta) > 1e-5);
 
-    printf ("\nNumero de iteracoes: %d", iter);
-    printf ("\n");
+    printf ("\n*************************** TÉRMINO *************************");
+    printf ("\n************************* %d ITERAÇÕES ***********************", iter);
+    printf ("\n\n\n");
     
     for (int i = 0; i < nBarras; i++) {
         free(fptheta[i]); 
@@ -215,10 +196,6 @@ double maxTheta, maxV;
         free(fqtheta[i]);
         free(fqV[i]);
     }
-    //free(fptheta); 
-    //free(fpV); 
-    //free(fqtheta); 
-    //free(fqV);
     
     free(Pcalc); free(PcalcOrdenado); 
     free(Qcalc); free(QcalcOrdenado);
@@ -230,18 +207,6 @@ double maxTheta, maxV;
     free(fpthetaOrdenado); free(fpV); free(fpVOrdenado); free(fqtheta); 
     free(fqthetaOrdenado); free(fqV); free(fqVOrdenado);
     free(coluna); free(colunaOrdenado);
-    /*
-    for (int i = 0; i < nBarras; i++) {
-        free(fptheta[i]); 
-        free(fpV[i]);
-        free(fqtheta[i]);
-        free(fqV[i]);
-    }
-    free(fptheta); 
-    free(fpV); 
-    free(fqtheta); 
-    free(fqV);
-*/
 }
 
 //CALCULANDO VETOR PCALC DE TAMNAHO nBarras
@@ -282,7 +247,7 @@ void calculaQcalc(int nBarras, double* tensao, double* vetorTeta, double** G, do
 
 void constroiDesvioDePotencia (int nPQ, int nPV, double* desvioP, double* PcalcOrdenado, 
                               double* QcalcOrdenado, double* campo4Ordenado) {
-        printf("\nCOmeçou a Jacobiana\n");
+        
     for (int i = 0; i < nPQ + nPV; i++) {
         if (i < nPQ) {
             desvioP[i] = -PcalcOrdenado[i];
@@ -298,7 +263,7 @@ void constroiJacobiana (int nBarras, int nPQ, int nPV, double* tensao, double* v
                         double** fqtheta, double** fqV, double* fpthetaOrdenado, double* fpVOrdenado,
                         double* fqthetaOrdenado, double* fqVOrdenado, double* coluna, double* colunaOrdenado) {
 
-
+    printf("\nCOmeçou a Jacobiana\n");
     
     for(int j = 0; j < nBarras; j++) {// consideramos todas as barras
         for(int i = 0; i < nBarras; i++) {// consideramos as barras Swing (nS)
@@ -307,8 +272,6 @@ void constroiJacobiana (int nBarras, int nPQ, int nPV, double* tensao, double* v
                 fpV[j][i] = Pcalc[j]/tensao[j] + tensao[j]*G[j][j];
                 fqtheta[j][i] = Pcalc[j] - tensao[j]*tensao[j]*G[j][j];
                 fqV[j][i] = Qcalc[j]/tensao[j] - tensao[j]*B[j][j];
-                //soma = soma + tensao[i]*(G[j][i]*sin(vetorTeta[i] - vetorTeta[j]) + 
-                //B[j][i]*cos(vetorTeta[i] - vetorTeta[j]));
             }
             else {
                 fptheta[j][i] = -(tensao[j]*tensao[i]*(G[j][i]*sin(vetorTeta[i] - vetorTeta[j]) 
@@ -365,23 +328,12 @@ void constroiJacobiana (int nBarras, int nPQ, int nPV, double* tensao, double* v
         }
     }
 
-    printf("\nTerminou a Jacobiana\n");
-    /*printf ("Matriz fptheta: \n");
-    verMatriz (fptheta, nBarras); 
-    printf ("Matriz fpV: \n");
-    verMatriz (fpV, nBarras);
-    printf ("Matriz fqtheta: \n");
-    verMatriz (fqtheta, nBarras); 
-    printf ("Matriz fqV: \n");
-    verMatriz (fqV, nBarras);*/    
-    //printf ("Matriz Jacobiana: \n");
-    //verMatriz (J, 2*nPQ + nPV); 
-    
+    printf("\nTerminou a Jacobiana\n");    
 }
 
-void calculoDoFluxoDePotencia (int nBarras, int nPQ, int nPV, double* tensao, double* vetorTeta, 
+void calculoDa_PotenciaAtiva_e_PerdaAtiva (int nBarras, int nPQ, int nPV, double* tensao, double* vetorTeta, 
                                int* tipoDaBarra, double** G, double** B, double** Sreal,
-                               double** Simag) {
+                               double** Simag, double** perdaAtiva) {
     double* Vreal = (double *)calloc(nBarras, sizeof(double*));
     double* Vimag = (double *)calloc(nBarras, sizeof(double*));
     double** Ireal = (double **)calloc(nBarras, sizeof(double*));
@@ -405,19 +357,34 @@ void calculoDoFluxoDePotencia (int nBarras, int nPQ, int nPV, double* tensao, do
             Simag[i][j] = (0.001*(-Vreal[i]*Iimag[i][j] + Vimag[i]*Ireal[i][j]))*3;
         }
     }
-    printf ("Matriz de Correntes Reais: ");
-    verMatriz(Ireal, nBarras);
-    printf ("Matriz de Correntes Imag: ");
-    verMatriz(Iimag, nBarras);
-    printf ("Matriz de Potencias Reais: ");
-    verMatriz(Sreal, nBarras);
-    printf ("Matriz de Potencias Imag: ");
-    verMatriz(Simag, nBarras);
+    for (int i = 0; i < nBarras; i++) {
+        for (int j = 0; j < nBarras; j++) {
+            perdaAtiva[i][j] = ((Vreal[i] - Vreal[j])*(Vreal[i] - Vreal[j]) + 
+                               (Vimag[i] - Vimag[j])*(Vimag[i] - Vimag[j]))*(-G[i][j]);
+            perdaAtiva[i][j] = (0.001*perdaAtiva[i][j])*3;        
+        }
+    }
+
 
 free(Vreal); free(Vimag);
 for (int i = 0; i < nBarras; i++) {free(Ireal[i]); free(Iimag[i]);}
-//free(Ireal); free(Iimag);
 }
+
+void calculoDaPotenciaAtivaDeCarga (int nBarras, double* tensao, double** G, double** B, 
+                                    double* consumoDaCarga) {
+    double somaReal = 0;
+    double somaImag = 0;
+    for (int i = 0; i < nBarras; i++) {
+        somaReal = 0; somaImag = 0;
+        for (int j = 0; j < nBarras; j++) {
+            somaReal = somaReal + G[i][j];
+        }
+        consumoDaCarga[i] = 0.001*3*tensao[i]*tensao[i]*somaReal;
+    }
+}
+
+
+
 /*Esse algoritmo ordena um vetor na ordem PQ, PV*/
 void ordenaVetor (int nPQ, int nPV, int nBarras, int* tipoDaBarra, double* ordenado, 
                   double *original) {
