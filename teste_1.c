@@ -84,10 +84,6 @@ double soma = 0;
         }
     }
 
-    //printf("Vetor b: ");
-    //for (int i = 0; i < n; i++) printf("%f ", b[i]);
-    //printf ("\n\n");
-
     //Resolvendo o sistema A*x = b
     x[n - 1] = b[n - 1]/temp[n - 1][n - 1];
     for (int i = n - 2; i >= 0; i--) {
@@ -126,9 +122,12 @@ double* c = (double *)calloc(n, sizeof(double));
 int* p = (int *)calloc(n, sizeof(int));
    
 
-    printf ("\n\n\n\nValores de iniciais utilizados: ");
-    for (int i = 0; i < n; i++) printf ("%.1lf | ", x[i]);
-        printf ("\n\n");
+    printf ("\n\n\nValores de iniciais utilizados: \n");
+    x[0] = rand()*7/3; 
+    x[1] = rand()*2/7;
+    printf ("x0: %5lf \n", x[0]);
+    printf ("y0: %5lf \n", x[1]);
+    printf ("\n");
     
     int iter = 0;
     while (iter < 10) {
@@ -154,25 +153,14 @@ int* p = (int *)calloc(n, sizeof(int));
             x[i] = x[i] + c[i];
         }
 
-        printf ("Solucao do sistema %d:\n", iter);
-        for (int i = 0; i < n; i++) printf("          %.8lf \n", x[i]);
-        printf ("\n");
+
     }
+    printf ("Solucao do sistema \n");
+    printf("x: %5.3lf \n", x[0]);
+    printf("y: %5.3lf ", x[1]);
+    printf ("\n\n");
     printf ("Numero de iteracoes: %d\n", iter);
     printf ("\n\n\n\n\n\n");
-    /*
-    printf ("Matriz A\n");
-    ver(A, n);
-
-    printf ("Vetor b inicial: ");
-    for (int i = 0; i < n; i++) printf("%f ", b[i]);
-    printf ("\n\n");
-
-    /********DECOMPOR A MATRIZ A EM LU********
-    decomposicaoLU(temp, p, n);
-
-    /********SOLUCAO DO SISTEMA*********
-    solucao (temp, b, c, p, n);*/    
 
     free(A); free(temp); free(b); free(x); free(p); free(c); 
 return 0;

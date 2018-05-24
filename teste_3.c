@@ -63,8 +63,6 @@ int l;
             somai = 0;
         }
     }
-    printf ("Matriz temp: \n");
-    ver(temp, n);
 }
 
 void solucao (double **temp, double *b, double *x, int *p, int n) {
@@ -85,10 +83,6 @@ double soma = 0;
             b[k] = b[k] - temp[k][i]*b[i];
         }
     }
-
-    //printf("Vetor b: ");
-    //for (int i = 0; i < n; i++) printf("%f ", b[i]);
-    //printf ("\n\n");
 
     //Resolvendo o sistema A*x = b
     x[n - 1] = b[n - 1]/temp[n - 1][n - 1];
@@ -111,9 +105,6 @@ void constroiJ (double** A, double* x, int n) {
         }
     }
     A[n-1][n-2] = -1; A[n-1][n-1] = 2 - (pow(e, x[n-1]))/((n+1)*(n+1));
-
-    printf ("Matriz A: \n");
-    ver(A, n);
 }
 
 void constroib (double* b, double *x, int n) {
@@ -125,7 +116,7 @@ void constroib (double* b, double *x, int n) {
 }
 
 int main () {
-int n = 20;
+int n = 40;
 n = n - 1;
 double** A = (double **)calloc(n, sizeof(double*));
 double** temp = (double **)calloc(n, sizeof(double*));
@@ -139,14 +130,11 @@ double* x = (double *)calloc(n, sizeof(double));
 //double* xtemp = (double *)calloc(n, sizeof(double));
 double* c = (double *)calloc(n, sizeof(double));
 int* p = (int *)calloc(n, sizeof(int));
+double maxc;
 
-
-    printf ("\n\n\n\nValores de iniciais utilizados: ");
-    for (int i = 0; i < n; i++) printf ("%.1lf | ", x[i]);
-        printf ("\n\n");
-    
+    printf ("\nValores de iniciais utilizados: aproximação inicial nula");
     int iter = 0;
-    while (iter < 10) {
+    do {
         iter++;
         constroiJ (A, x, n);
         constroib (b, x, n);
@@ -164,11 +152,23 @@ int* p = (int *)calloc(n, sizeof(int));
             x[i] = x[i] + c[i];
         }
 
-        printf ("Solucao do sistema %d:\n", iter);
-        for (int i = 0; i < n; i++) printf("          %.8lf \n", x[i]);
+        maxc = fabs(c[0]);
+
+        for (int i = 1; i < n; i++) {
+            if (fabs(c[i]) > fabs(maxc)) maxc = fabs(c[i]);
+        }
+    } while (maxc > 1e-6);
+
+
+    printf ("\n\nNumero de iteracoes: %d", iter);
+
+     printf ("\n\nSolucao do sistema para n = %d\n", n + 1);
+    for (int i = 0; i < n; i++) {
+        printf("%e ", x[i]);
         printf ("\n");
-    }
-    printf ("Numero de iteracoes: %d\n", iter);
+        }
+    printf ("\n");
+
     printf ("\n\n\n\n\n\n");   
 
     free(A); free(temp); free(b); free(x); free(p); free(c); 

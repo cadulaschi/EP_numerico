@@ -5,7 +5,7 @@ void verMatriz (double **ver, int n) {
     printf ("\n");
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            printf ("%.5lf \t", ver[i][j]);
+            printf ("%10.3E \t", ver[i][j]);
         }
         printf ("\n");
     }
@@ -138,24 +138,24 @@ double maxTheta, maxV;
     int iter = 0;
     do {
         iter++;
-        printf("\n ********************** ITERAÇÃO %d ************************", iter);
 
-        calculaPcalc(nBarras, tensao, vetorTeta, G, B, Pcalc);
+        printf ("\n************************* ITERAÇÃO %d ***********************\n", iter);
         
+        calculaPcalc(nBarras, tensao, vetorTeta, G, B, Pcalc);
         ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, PcalcOrdenado , Pcalc);  
         
         calculaQcalc(nBarras, tensao, vetorTeta, G, B, Qcalc);
-        
-        ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, QcalcOrdenado , Qcalc);       
+        ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, QcalcOrdenado , Qcalc);               
         
         constroiJacobiana (nBarras, nPQ, nPV, tensao, vetorTeta, tipoDaBarra, Pcalc, Qcalc,
                            G, B, J, troca, fptheta, fpV, fqtheta, fqV, fpthetaOrdenado, fpVOrdenado,
                            fqthetaOrdenado, fqVOrdenado, coluna, colunaOrdenado);
 
+        //Aqui, ordenamos o vetor campo4 para que seja utilizado na funcao constroiDesvioDePotencia
         ordenaVetor(nPQ, nPV, nBarras, tipoDaBarra, campo4Ordenado, campo4);
         //Forma vetor de desvios já negativado!
         constroiDesvioDePotencia (nPQ, nPV, desvioP, PcalcOrdenado, QcalcOrdenado, campo4Ordenado);  
-
+    
          for (int i = 0; i < 2*nPQ+ nPV; i++) {
             for (int j = 0; j < 2*nPQ+ nPV; j++) {
                 temp [i][j] = J[i][j];
@@ -167,6 +167,7 @@ double maxTheta, maxV;
         printf("\nComeçou solucao\n");
         solucao (temp, desvioP, c, p, 2*nPQ + nPV);
         printf("\nTerminou solucao\n");
+
 
         for (int i = 0; i < nPQ + nPV; i++) {
             if (i < nPQ) {

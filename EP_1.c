@@ -46,7 +46,7 @@ int main () {
     double* tensaoNominal = (double *)calloc(nBarras, sizeof(double));
     double* campo4 = (double *)calloc(nBarras, sizeof(double));
     double* campo5 = (double *)calloc(nBarras, sizeof(double));
-
+    double* vetorTeta = (double *)calloc(nBarras, sizeof(double));
 
 
     //GERANDO AS MATRIZES COM ALOCAÇÃO DINAMICA
@@ -56,6 +56,7 @@ int main () {
         B[i] = (double *)calloc(nBarras, sizeof(double));
         G[i] = (double *)calloc(nBarras, sizeof(double));
     }
+    
 
         
     for (int i=0; i < nBarras; i++){
@@ -75,7 +76,7 @@ int main () {
 
     //CRIAMOS O VETOR TETA DE TAMANHO NBARRAS 
     //COMO USAMOS CALLOC, ELE SEMPRE SERÁ INICIADO EM ZERO EM TODOS OS VALORES
-    double* vetorTeta = (double *)calloc(nBarras, sizeof(double)); 
+     
     
     for(int i = 0; i < nBarras; i ++ /*jS++*/) {
         if (tipoDaBarra[i] == 2) vetorTeta[i] = (PI*campo5[i])/180;

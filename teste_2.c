@@ -83,11 +83,6 @@ double soma = 0;
             b[k] = b[k] - temp[k][i]*b[i];
         }
     }
-
-    //printf("Vetor b: ");
-    //for (int i = 0; i < n; i++) printf("%f ", b[i]);
-    //printf ("\n\n");
-
     //Resolvendo o sistema A*x = b
     x[n - 1] = b[n - 1]/temp[n - 1][n - 1];
     for (int i = n - 2; i >= 0; i--) {
@@ -128,25 +123,19 @@ double* x = (double *)calloc(n, sizeof(double));
 //double* xtemp = (double *)calloc(n, sizeof(double));
 double* c = (double *)calloc(n, sizeof(double));
 int* p = (int *)calloc(n, sizeof(int));
+double maxc;    
 
-
-
-//A[0][0] = 2; A[0][1] = 0; //A[0][2] = 1; A[0][3] = 0;
-//A[1][0] = 0; A[1][1] = 2; //A[1][2] = 3; A[1][3] = 1;
-//A[2][0] = 8; A[2][1] = 7; A[2][2] = 9; A[2][3] = 5;
-//A[3][0] = 6; A[3][1] = 7; A[3][2] = 9; A[3][3] = 8;
-//b[0] = 1; b[1] = 2;
     x[0] = 1;
     x[1] = 1;
     x[2] = 1;
     x[3] = 1;  
 
     printf ("\n\n\n\nValores de iniciais utilizados: ");
-    for (int i = 0; i < n; i++) printf ("%.1lf | ", x[i]);
-        printf ("\n\n");
+    for (int i = 0; i < n; i++) printf ("| %.1lf ", x[i]);
+        printf ("|\n\n");
     
     int iter = 0;
-    while (iter < 10) {
+    do {
         iter++;
         constroiJ (A, x, n);
         //ver(A, n);
@@ -169,10 +158,17 @@ int* p = (int *)calloc(n, sizeof(int));
             x[i] = x[i] + c[i];
         }
 
+        maxc = fabs(c[0]);
+
+        for (int i = 1; i < n; i++) {
+            if (fabs(c[i]) > fabs(maxc)) maxc = fabs(c[i]);
+        }
+
         printf ("Solucao do sistema %d:\n", iter);
         for (int i = 0; i < n; i++) printf("          %.8lf \n", x[i]);
         printf ("\n");
-    }
+
+    } while (maxc > 1e-5);
     printf ("Numero de iteracoes: %d\n", iter);
     printf ("\n\n\n\n\n\n");  
 
